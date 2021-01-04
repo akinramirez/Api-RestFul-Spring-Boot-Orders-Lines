@@ -1,6 +1,7 @@
 package com.akinramirez.orderapi.controllers;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.management.RuntimeErrorException;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.akinramirez.orderapi.dtos.ProductDTO;
 import com.akinramirez.orderapi.entity.*;
 import com.akinramirez.orderapi.repository.ProductRepository;
 import com.akinramirez.orderapi.services.ProductService;
@@ -33,14 +35,18 @@ public class ProductController {
 	 */
 
 	@GetMapping(value = "/products/{productId}")
-	public ResponseEntity<Product> findById(@PathVariable("productId") Long productId) {
+	public ResponseEntity<ProductDTO> findById(@PathVariable("productId") Long productId) {
 		// Dummy
 		/*
 		 * for (Product prod : this.products) { if (prod.getId().longValue() ==
 		 * productId.longValue()) { return prod; } } return null;
 		 */
 		Product product = productService.findById(productId);
-		return new ResponseEntity<Product>(product, HttpStatus.OK);
+
+		ProductDTO productDTO = ProductDTO.builder().id(product.getId()).name(product.getName())
+				.price(product.getPrice()).build();
+
+		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
 
 	}
 
@@ -58,29 +64,50 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/products")
-	public ResponseEntity<List<Product>> findAll() {
+	public ResponseEntity<List<ProductDTO>> findAll() {
 		// return this.products;
 		List<Product> products = productService.findAll();
-		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+
+		List<ProductDTO> dtoProducts = products.stream().map(product -> {
+			return ProductDTO.builder()
+					.id(product.getId())
+					.name(product.getName())
+					.price(product.getPrice())
+					.build();
+		}).collect(Collectors.toList());
+
+		return new ResponseEntity<List<ProductDTO>>(dtoProducts, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/products")
-	public ResponseEntity<Product> create(@RequestBody Product product) {
+	public ResponseEntity<ProductDTO> create(@RequestBody Product product) {
 		/*
 		 * this.products.add(product); return product;
 		 */
 		Product newProduct = productService.save(product);
-		return new ResponseEntity<Product>(newProduct, HttpStatus.CREATED);
+		
+		ProductDTO productDTO = ProductDTO.builder()
+				.id(newProduct.getId())
+				.name(newProduct.getName())
+				.price(newProduct.getPrice()).build();
+		
+		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "/products")
-	public ResponseEntity<Product> update(@RequestBody Product product) {
+	public ResponseEntity<ProductDTO> update(@RequestBody Product product) {
 		/*
 		 * for (Product prod : this.products) { if (prod.getId().longValue() ==
 		 * product.getId().longValue()) { prod.setName(product.getName()); return prod;
 		 * } } throw new RuntimeException("No existe el producto");
 		 */
 		Product updateProduct = productService.save(product);
-		return new ResponseEntity<Product>(updateProduct, HttpStatus.OK);
+		
+		ProductDTO productDTO = ProductDTO.builder()
+				.id(updateProduct.getId())
+				.name(updateProduct.getName())
+				.price(updateProduct.getPrice()).build();
+		
+		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
 	}
 }
