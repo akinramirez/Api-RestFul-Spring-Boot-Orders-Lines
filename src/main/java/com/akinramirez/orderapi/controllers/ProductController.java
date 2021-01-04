@@ -17,26 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.akinramirez.orderapi.entity.*;
 import com.akinramirez.orderapi.repository.ProductRepository;
+import com.akinramirez.orderapi.services.ProductService;
 
 @RestController
 public class ProductController {
 	@Autowired
-	private ProductRepository productRepo;
+	private ProductService productService;
 
 	private List<Product> products = new ArrayList<>();
 
-	/*public ProductController() {
-		for (int c = 0; c <= 10; c++) {
-			products.add(Product.builder().id((c + 1L)).name("Product " + (c + 1L)).build());
-		}
-	}*/
-
-	@GetMapping(value = "/products")
-	public ResponseEntity<List<Product>> findAll() {
-		//return this.products;
-		List<Product> products = productRepo.findAll();
-		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
-	}
+	/*
+	 * public ProductController() { for (int c = 0; c <= 10; c++) {
+	 * products.add(Product.builder().id((c + 1L)).name("Product " + (c +
+	 * 1L)).build()); } }
+	 */
 
 	@GetMapping(value = "/products/{productId}")
 	public ResponseEntity<Product> findById(@PathVariable("productId") Long productId) {
@@ -45,39 +39,9 @@ public class ProductController {
 		 * for (Product prod : this.products) { if (prod.getId().longValue() ==
 		 * productId.longValue()) { return prod; } } return null;
 		 */
-		Product product = productRepo.findById(productId)
-				.orElseThrow(() -> new RuntimeException("No existe el producto"));
-		return new ResponseEntity<Product>(product, HttpStatus.NO_CONTENT.OK);
+		Product product = productService.findById(productId);
+		return new ResponseEntity<Product>(product, HttpStatus.OK);
 
-	}
-	
-	
-
-	@PostMapping(value = "/products")
-	public ResponseEntity<Product> create(@RequestBody Product product) {
-		/*this.products.add(product);
-		return product;*/
-		Product newProduct = productRepo.save(product);
-		return new ResponseEntity<Product>(newProduct,HttpStatus.CREATED);
-	}
-
-	
-	@PutMapping(value = "/products")
-	public ResponseEntity<Product> update(@RequestBody Product product) {
-		/*for (Product prod : this.products) {
-			if (prod.getId().longValue() == product.getId().longValue()) {
-				prod.setName(product.getName());
-				return prod;
-			}
-		}
-		throw new RuntimeException("No existe el producto");*/
-		Product existProduct = productRepo.findById(product.getId())
-				.orElseThrow(() -> new RuntimeException("No existe el producto"));
-		existProduct.setName(product.getName());
-		existProduct.setPrice(product.getPrice());
-		productRepo.save(existProduct);
-		return new ResponseEntity<Product>(existProduct, HttpStatus.OK);
-		
 	}
 
 	@DeleteMapping(value = "/products/{productId}")
@@ -89,11 +53,34 @@ public class ProductController {
 		 * RuntimeException("No existe el producto");
 		 * this.products.remove(deleteProduct);
 		 */
-		Product product = productRepo.findById(productId)
-				.orElseThrow(() -> new RuntimeException("No existe el producto"));
-		productRepo.delete(product);
+		productService.delete(productId);
 		return new ResponseEntity(HttpStatus.OK);
-
 	}
 
+	@GetMapping(value = "/products")
+	public ResponseEntity<List<Product>> findAll() {
+		// return this.products;
+		List<Product> products = productService.findAll();
+		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/products")
+	public ResponseEntity<Product> create(@RequestBody Product product) {
+		/*
+		 * this.products.add(product); return product;
+		 */
+		Product newProduct = productService.save(product);
+		return new ResponseEntity<Product>(newProduct, HttpStatus.CREATED);
+	}
+
+	@PutMapping(value = "/products")
+	public ResponseEntity<Product> update(@RequestBody Product product) {
+		/*
+		 * for (Product prod : this.products) { if (prod.getId().longValue() ==
+		 * product.getId().longValue()) { prod.setName(product.getName()); return prod;
+		 * } } throw new RuntimeException("No existe el producto");
+		 */
+		Product updateProduct = productService.save(product);
+		return new ResponseEntity<Product>(updateProduct, HttpStatus.OK);
+	}
 }
