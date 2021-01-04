@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.akinramirez.orderapi.entity.Product;
 import com.akinramirez.orderapi.repository.ProductRepository;
+import com.akinramirez.orderapi.validators.ProductValidator;
 
 @Service
 public class ProductService {
@@ -32,6 +33,8 @@ public class ProductService {
 
 	@Transactional
 	public Product save(Product product) {
+		ProductValidator.save(product);
+		
 		if (product.getId() == null) {
 			Product newProduct = productRepo.save(product);
 			return newProduct;
