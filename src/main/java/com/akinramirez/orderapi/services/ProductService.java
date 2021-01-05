@@ -2,6 +2,7 @@ package com.akinramirez.orderapi.services;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.akinramirez.orderapi.entity.Product;
@@ -26,8 +27,8 @@ public class ProductService {
 		productRepo.delete(product);
 	}
 
-	public List<Product> findAll() {
-		List<Product> products = productRepo.findAll();
+	public List<Product> findAll(Pageable page) {
+		List<Product> products = productRepo.findAll(page).toList();
 		return products;
 	}
 

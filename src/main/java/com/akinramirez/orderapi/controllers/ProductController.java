@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.akinramirez.orderapi.converters.ProductConverter;
 import com.akinramirez.orderapi.dtos.ProductDTO;
 import com.akinramirez.orderapi.entity.*;
 import com.akinramirez.orderapi.repository.ProductRepository;
@@ -25,6 +29,8 @@ import com.akinramirez.orderapi.services.ProductService;
 public class ProductController {
 	@Autowired
 	private ProductService productService;
+	
+	private ProductConverter converter = new ProductConverter()	;
 
 	private List<Product> products = new ArrayList<>();
 
@@ -42,12 +48,8 @@ public class ProductController {
 		 * productId.longValue()) { return prod; } } return null;
 		 */
 		Product product = productService.findById(productId);
-
-		ProductDTO productDTO = ProductDTO.builder().id(product.getId()).name(product.getName())
-				.price(product.getPrice()).build();
-
+		ProductDTO productDTO = converter.fromEntitys(product);
 		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
-
 	}
 
 	@DeleteMapping(value = "/products/{productId}")
@@ -64,50 +66,37 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/products")
-	public ResponseEntity<List<ProductDTO>> findAll() {
+	public ResponseEntity<List<ProductDTO>> findAll(
+			@RequestParam(value="pageNumber", required = false, defaultValue = "0") int pageNumber,
+			@RequestParam(value="pageSize", required = false, defaultValue = "5") int pageSize
+			) {
+		
+		Pageable page = PageRequest.of(pageNumber, pageSize);
 		// return this.products;
-		List<Product> products = productService.findAll();
-
-		List<ProductDTO> dtoProducts = products.stream().map(product -> {
-			return ProductDTO.builder()
-					.id(product.getId())
-					.name(product.getName())
-					.price(product.getPrice())
-					.build();
-		}).collect(Collectors.toList());
-
+		List<Product> products = productService.findAll(page);
+		List<ProductDTO> dtoProducts = converter.fromEntity(products);
 		return new ResponseEntity<List<ProductDTO>>(dtoProducts, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/products")
-	public ResponseEntity<ProductDTO> create(@RequestBody Product product) {
+	public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO product) {
 		/*
 		 * this.products.add(product); return product;
 		 */
-		Product newProduct = productService.save(product);
-		
-		ProductDTO productDTO = ProductDTO.builder()
-				.id(newProduct.getId())
-				.name(newProduct.getName())
-				.price(newProduct.getPrice()).build();
-		
+		Product newProduct = productService.save(converter.fromDTO(product));		
+		ProductDTO productDTO = converter.fromEntitys(newProduct);		
 		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "/products")
-	public ResponseEntity<ProductDTO> update(@RequestBody Product product) {
+	public ResponseEntity<ProductDTO> update(@RequestBody ProductDTO product) {
 		/*
 		 * for (Product prod : this.products) { if (prod.getId().longValue() ==
 		 * product.getId().longValue()) { prod.setName(product.getName()); return prod;
 		 * } } throw new RuntimeException("No existe el producto");
 		 */
-		Product updateProduct = productService.save(product);
-		
-		ProductDTO productDTO = ProductDTO.builder()
-				.id(updateProduct.getId())
-				.name(updateProduct.getName())
-				.price(updateProduct.getPrice()).build();
-		
+		Product updateProduct = productService.save(converter.fromDTO(product));		
+		ProductDTO productDTO = converter.fromEntitys(updateProduct);		
 		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
 	}
 }
