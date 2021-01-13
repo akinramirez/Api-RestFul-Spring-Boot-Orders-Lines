@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.akinramirez.orderapi.exceptions.GeneralServiceException;
 import com.akinramirez.orderapi.exceptions.NoDataFoundException;
 import com.akinramirez.orderapi.exceptions.ValidateServiceException;
+import com.akinramirez.orderapi.utils.WrapperResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,25 +22,29 @@ public class ErrorHandlerConfig extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> all(Exception e, WebRequest request){
 		log.error(e.getMessage(), e);
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);		
+		WrapperResponse<?> response = new WrapperResponse<>(false, "Internal Server Error",null);
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);		
 	}
 	
 	@ExceptionHandler(ValidateServiceException.class)
 	public ResponseEntity<?> validateServiceException(ValidateServiceException e, WebRequest request){
 		log.info(e.getMessage(), e);
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);		
+		WrapperResponse<?> response = new WrapperResponse<>(false,e.getMessage(),null);
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);		
 	}
 	
 	@ExceptionHandler(NoDataFoundException.class)
 	public ResponseEntity<?> noDataFoundException(NoDataFoundException e, WebRequest request){
 		log.info(e.getMessage(), e);
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);		
+		WrapperResponse<?> response = new WrapperResponse<>(false,e.getMessage(),null);
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);		
 	}
 	
 	@ExceptionHandler(GeneralServiceException.class)
 	public ResponseEntity<?> generalServiceException(GeneralServiceException e, WebRequest request){
 		log.error(e.getMessage(), e);
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);		
+		WrapperResponse<?> response = new WrapperResponse<>(false, "Internal Server Error",null);
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);		
 	}
 	
 }

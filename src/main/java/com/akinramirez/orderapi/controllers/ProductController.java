@@ -24,6 +24,7 @@ import com.akinramirez.orderapi.dtos.ProductDTO;
 import com.akinramirez.orderapi.entity.*;
 import com.akinramirez.orderapi.repository.ProductRepository;
 import com.akinramirez.orderapi.services.ProductService;
+import com.akinramirez.orderapi.utils.WrapperResponse;
 
 @RestController
 public class ProductController {
@@ -41,7 +42,7 @@ public class ProductController {
 	 */
 
 	@GetMapping(value = "/products/{productId}")
-	public ResponseEntity<ProductDTO> findById(@PathVariable("productId") Long productId) {
+	public ResponseEntity<WrapperResponse<ProductDTO>> findById(@PathVariable("productId") Long productId) {
 		// Dummy
 		/*
 		 * for (Product prod : this.products) { if (prod.getId().longValue() ==
@@ -49,11 +50,12 @@ public class ProductController {
 		 */
 		Product product = productService.findById(productId);
 		ProductDTO productDTO = converter.fromEntitys(product);
-		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
+		return new WrapperResponse<ProductDTO>(true,"success",productDTO)
+				.createResponse(HttpStatus.OK); 
 	}
 
 	@DeleteMapping(value = "/products/{productId}")
-	public ResponseEntity delete(@PathVariable("productId") Long productId) {
+	public ResponseEntity<?> delete(@PathVariable("productId") Long productId) {
 		/*
 		 * Product deleteProduct = null; for (Product prod : this.products) { if
 		 * (prod.getId().longValue() == productId.longValue()) { deleteProduct = prod;
@@ -62,7 +64,8 @@ public class ProductController {
 		 * this.products.remove(deleteProduct);
 		 */
 		productService.delete(productId);
-		return new ResponseEntity(HttpStatus.OK);
+		return new WrapperResponse(true,"success",null)
+				.createResponse(HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/products")
@@ -75,7 +78,8 @@ public class ProductController {
 		// return this.products;
 		List<Product> products = productService.findAll(page);
 		List<ProductDTO> dtoProducts = converter.fromEntity(products);
-		return new ResponseEntity<List<ProductDTO>>(dtoProducts, HttpStatus.OK);
+		return new WrapperResponse(true,"success",dtoProducts)
+				.createResponse(HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/products")
@@ -85,7 +89,8 @@ public class ProductController {
 		 */
 		Product newProduct = productService.save(converter.fromDTO(product));		
 		ProductDTO productDTO = converter.fromEntitys(newProduct);		
-		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.CREATED);
+		return new WrapperResponse(true,"success",productDTO)
+				.createResponse(HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "/products")
@@ -96,7 +101,8 @@ public class ProductController {
 		 * } } throw new RuntimeException("No existe el producto");
 		 */
 		Product updateProduct = productService.save(converter.fromDTO(product));		
-		ProductDTO productDTO = converter.fromEntitys(updateProduct);		
-		return new ResponseEntity<ProductDTO>(productDTO, HttpStatus.OK);
+		ProductDTO productDTO = converter.fromEntitys(updateProduct);
+		return new WrapperResponse(true,"success",productDTO)
+				.createResponse(HttpStatus.OK);
 	}
 }
