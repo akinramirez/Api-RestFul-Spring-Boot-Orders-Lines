@@ -49,7 +49,7 @@ public class ProductController {
 		 * productId.longValue()) { return prod; } } return null;
 		 */
 		Product product = productService.findById(productId);
-		ProductDTO productDTO = converter.fromEntitys(product);
+		ProductDTO productDTO = converter.fromEntity(product);
 		return new WrapperResponse<ProductDTO>(true,"success",productDTO)
 				.createResponse(HttpStatus.OK); 
 	}
@@ -88,7 +88,7 @@ public class ProductController {
 		 * this.products.add(product); return product;
 		 */
 		Product newProduct = productService.save(converter.fromDTO(product));		
-		ProductDTO productDTO = converter.fromEntitys(newProduct);		
+		ProductDTO productDTO = converter.fromEntity(newProduct);		
 		return new WrapperResponse(true,"success",productDTO)
 				.createResponse(HttpStatus.CREATED);
 	}
@@ -101,7 +101,7 @@ public class ProductController {
 		 * } } throw new RuntimeException("No existe el producto");
 		 */
 		Product updateProduct = productService.save(converter.fromDTO(product));		
-		ProductDTO productDTO = converter.fromEntitys(updateProduct);
+		ProductDTO productDTO = converter.fromEntity(updateProduct);
 		return new WrapperResponse(true,"success",productDTO)
 				.createResponse(HttpStatus.OK);
 	}
