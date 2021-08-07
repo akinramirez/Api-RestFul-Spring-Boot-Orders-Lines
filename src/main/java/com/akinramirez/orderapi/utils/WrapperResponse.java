@@ -16,8 +16,13 @@ public class WrapperResponse<T> {
 	private boolean ok;
 	private String messsage;
 	private T Body;
-	
-	public ResponseEntity<WrapperResponse<T>> createResponse(HttpStatus status){
-		return new ResponseEntity(this,status);
+
+	public ResponseEntity<WrapperResponse<T>> createResponse() {
+		return new ResponseEntity<>(this, HttpStatus.OK);
 	}
+
+	public ResponseEntity<WrapperResponse<T>> createResponse(HttpStatus status) {
+		return new ResponseEntity<>(this, status);
+	}
+
 }
