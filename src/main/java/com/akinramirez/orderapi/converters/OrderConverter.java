@@ -10,10 +10,13 @@ import com.akinramirez.orderapi.dtos.OrderLineDTO;
 import com.akinramirez.orderapi.entity.Order;
 import com.akinramirez.orderapi.entity.OrderLine;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class OrderConverter extends AbstractConverter<Order, OrderDTO>{
 
-	private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/y");
-	private ProductConverter productConverter = new ProductConverter();
+	private DateTimeFormatter dateTimeFormat;
+	private ProductConverter productConverter;
 	
 	@Override
 	public OrderDTO fromEntity(Order entity) {

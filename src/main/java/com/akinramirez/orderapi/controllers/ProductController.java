@@ -31,6 +31,7 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 	
+	@Autowired
 	private ProductConverter converter = new ProductConverter()	;
 
 	private List<Product> products = new ArrayList<>();
