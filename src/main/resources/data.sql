@@ -1,4 +1,4 @@
-INSERT INTO orders.users (password, username) VALUES('123345', 'AKIN');
+INSERT INTO orders.users (password, username) VALUES('$2a$10$t3fuwTbtK1exeb1lt2Jk5.lT8fI00RhUqn05knAp7c.Yt59mbwmr6', 'AKIN');
 
 INSERT INTO products(NAME, PRICE) VALUES('Product 1', 100);
 INSERT INTO products(NAME, PRICE) VALUES('Product 2', 200);
