@@ -14,12 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import com.akinramirez.orderapi.entity.Order;
 import com.akinramirez.orderapi.entity.OrderLine;
 import com.akinramirez.orderapi.entity.Product;
+import com.akinramirez.orderapi.entity.User;
 import com.akinramirez.orderapi.exceptions.GeneralServiceException;
 import com.akinramirez.orderapi.exceptions.NoDataFoundException;
 import com.akinramirez.orderapi.exceptions.ValidateServiceException;
 import com.akinramirez.orderapi.repository.OrderLineRepository;
 import com.akinramirez.orderapi.repository.OrderRepository;
 import com.akinramirez.orderapi.repository.ProductRepository;
+import com.akinramirez.orderapi.security.UserPrincipal;
 import com.akinramirez.orderapi.validators.OrderValidator;
 
 @Slf4j
@@ -79,7 +81,7 @@ public class OrderService {
 		try {
 			OrderValidator.save(order);
 
-			//User user = UserPrincipal.getCurrentUser();
+			User user = UserPrincipal.getCurrentUser();
 
 			double total = 0;
 			for (OrderLine line : order.getLines()) {
@@ -95,7 +97,7 @@ public class OrderService {
 			order.getLines().forEach(line -> line.setOrder(order));
 
 			if (order.getId() == null) {
-				//order.setUser(user);
+				order.setUser(user);
 				order.setRegDate(LocalDateTime.now());
 				return orderRepo.save(order);
 			}

@@ -1,6 +1,11 @@
 package com.akinramirez.orderapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,33 +16,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name="ORDER_LINES")
-public class OrderLine {
-
+@Table(name="USERS")
+public class User {
+	
 	@Id
 	@Column(name="ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name="FK_ORDER", nullable = false)
-	private Order order;
+	@Column(name="USERNAME", length = 30, nullable = false)
+	private String username;
 	
-	@ManyToOne
-	@JoinColumn(name="FK_PRODUCT", nullable = false)
-	private Product product;
-	
-	@Column(name="PRICE", nullable = false)
-	private Double price;
-	
-	@Column(name="QUANTITY", nullable = false)
-	private Double quantity;
-	
-	@Column(name="TOTAL", nullable = false)
-	private Double total;
+	@Column(name="PASSWORD", nullable = false, length = 150)
+	private String password;
 
 	@Override
 	public int hashCode() {
@@ -55,7 +49,7 @@ public class OrderLine {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OrderLine other = (OrderLine) obj;
+		User other = (User) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -63,6 +57,6 @@ public class OrderLine {
 			return false;
 		return true;
 	}
-
+	
 	
 }

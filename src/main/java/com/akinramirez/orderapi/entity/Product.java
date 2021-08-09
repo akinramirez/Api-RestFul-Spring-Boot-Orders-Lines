@@ -16,9 +16,9 @@ import lombok.Setter;
 @Setter
 //Crea entidades de forma mas sencillas
 @Builder
-//JPA
 @Entity
 @Table(name="PRODUCTS")
+
 public class Product {
 	@Id
 	@Column(name="ID")
